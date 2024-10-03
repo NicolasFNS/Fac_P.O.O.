@@ -45,7 +45,6 @@ public class Banco implements Serializable {
         System.out.println("Saldo total no banco: R$" + saldoTotal);
     }
     
-
     public void salvarDados(String arquivo) throws IOException {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(arquivo))) {
             out.writeObject(clientes);
@@ -63,5 +62,4 @@ public class Banco implements Serializable {
             }
         }
     }
-
 }
