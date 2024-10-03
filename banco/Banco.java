@@ -44,6 +44,7 @@ public class Banco implements Serializable {
         }
         System.out.println("Saldo total no banco: R$" + saldoTotal);
     }
+    
 
     public void salvarDados(String arquivo) throws IOException {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(arquivo))) {
@@ -51,9 +52,16 @@ public class Banco implements Serializable {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void carregarDados(String arquivo) throws IOException, ClassNotFoundException {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(arquivo))) {
-            clientes = (List<Cliente>) in.readObject();
+            Object obj = in.readObject();
+            if (obj instanceof List<?>) {
+                this.clientes = (List<Cliente>) obj;
+            } else {
+                throw new ClassNotFoundException("O objeto deserializado não é uma lista de clientes.");
+            }
         }
     }
+
 }
