@@ -65,92 +65,98 @@ public class Main {
 
                 cliente = banco.login(cpf, senha);
 
-                if (cliente == null) {
-                    System.out.println("Falha no login. CPF ou senha incorretos.");
-                }
+                if (cliente != null){
 
-                System.out.println("Digite o número equivalente ao que você quer fazer:");
-                System.out.println("(1) nova conta poupança");
-                System.out.println("(2) nova conta corrente");
-                System.out.println("(3) depositar");
-                System.out.println("(4) sacar");
-                System.out.println("(5) listar contas");
-                System.out.println("(6) exibir Histórico");
-                System.out.println("(7) Excluir Conta");
-                System.out.println("qualquer outro número para sair");
-                
-                int acao = scanner.nextInt();
-                scanner.nextLine();
+                    int acao = 1;
+                    while(acao > 0 || acao > 7){
 
-                if(acao == 1){
-                    System.out.println("Digite o número da nova conta corrente:");
-                    String numeroContaCorrente = scanner.nextLine();
-                    ContaCorrente cc = new ContaCorrente(numeroContaCorrente);
-                    cliente.abrirConta(cc);
-                    System.out.println("Conta Corrente aberta com sucesso.");
-
-                }else if(acao == 2){
-                    System.out.println("Digite o número da nova conta poupança:");
-                    String numeroContaPoupanca = scanner.nextLine();
-                    ContaPoupanca cp = new ContaPoupanca(numeroContaPoupanca);
-                    cliente.abrirConta(cp);
-                    System.out.println("Conta Poupança aberta com sucesso.");
-                
-                }else if(acao == 3){
-                    cliente.listarContas();
-                    System.out.println("Digite o número da conta para depósito:");
-                    String numeroContaDeposito = scanner.nextLine();
-                    ContaBancaria contaDeposito = encontrarConta(cliente, numeroContaDeposito);
-                    if (contaDeposito != null) {
-                        System.out.println("Digite o valor a depositar:");
-                        double valorDeposito = scanner.nextDouble();
+                        System.out.println("Digite o número equivalente ao que você quer fazer:");
+                        System.out.println("(1) nova conta poupança");
+                        System.out.println("(2) nova conta corrente");
+                        System.out.println("(3) depositar");
+                        System.out.println("(4) sacar");
+                        System.out.println("(5) listar contas");
+                        System.out.println("(6) exibir Histórico");
+                        System.out.println("(7) Excluir Conta");
+                        System.out.println("qualquer outro número para sair");
+                        
+                        acao = scanner.nextInt();
                         scanner.nextLine();
-                        contaDeposito.depositar(valorDeposito);
-                    } else {
-                        System.out.println("Conta não encontrada.");
-                    }
-                    
-                }else if(acao == 4){
-                    cliente.listarContas();
-                    System.out.println("Digite o número da conta para saque:");
-                    String numeroContaSaque = scanner.nextLine();
-                    ContaBancaria contaSaque = encontrarConta(cliente, numeroContaSaque);
-                    if (contaSaque != null) {
-                        System.out.println("Digite o valor a sacar:");
-                        double valorSaque = scanner.nextDouble();
-                        scanner.nextLine();  
-                        try {
-                            contaSaque.sacar(valorSaque);
-                        } catch (Exception e) {
-                            System.out.println(e.getMessage());
+
+                        if(acao == 1){
+                            System.out.println("Digite o número da nova conta corrente:");
+                            String numeroContaCorrente = scanner.nextLine();
+                            ContaCorrente cc = new ContaCorrente(numeroContaCorrente);
+                            cliente.abrirConta(cc);
+                            System.out.println("Conta Corrente aberta com sucesso.");
+
+                        }else if(acao == 2){
+                            System.out.println("Digite o número da nova conta poupança:");
+                            String numeroContaPoupanca = scanner.nextLine();
+                            ContaPoupanca cp = new ContaPoupanca(numeroContaPoupanca);
+                            cliente.abrirConta(cp);
+                            System.out.println("Conta Poupança aberta com sucesso.");
+                        
+                        }else if(acao == 3){
+                            cliente.listarContas();
+                            System.out.println("Digite o número da conta para depósito:");
+                            String numeroContaDeposito = scanner.nextLine();
+                            ContaBancaria contaDeposito = encontrarConta(cliente, numeroContaDeposito);
+                            if (contaDeposito != null) {
+                                System.out.println("Digite o valor a depositar:");
+                                double valorDeposito = scanner.nextDouble();
+                                scanner.nextLine();
+                                contaDeposito.depositar(valorDeposito);
+                            } else {
+                                System.out.println("Conta não encontrada.");
+                            }
+                            
+                        }else if(acao == 4){
+                            cliente.listarContas();
+                            System.out.println("Digite o número da conta para saque:");
+                            String numeroContaSaque = scanner.nextLine();
+                            ContaBancaria contaSaque = encontrarConta(cliente, numeroContaSaque);
+                            if (contaSaque != null) {
+                                System.out.println("Digite o valor a sacar:");
+                                double valorSaque = scanner.nextDouble();
+                                scanner.nextLine();  
+                                try {
+                                    contaSaque.sacar(valorSaque);
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            } else {
+                                System.out.println("Conta não encontrada.");
+                            }
+                            
+                        }else if(acao == 5){
+                            cliente.listarContas();
+
+                        }else if(acao == 6){
+                            System.out.println("Digite o número da conta para exibir o histórico:");
+                            String numeroContaHistorico = scanner.nextLine();
+                            ContaBancaria contaHistorico = encontrarConta(cliente, numeroContaHistorico);
+                            if (contaHistorico instanceof ContaCorrente) {
+                                ((ContaCorrente) contaHistorico).exibirHistorico();
+                            } else if (contaHistorico instanceof ContaPoupanca) {
+                                ((ContaPoupanca) contaHistorico).exibirHistorico();
+                            } else {
+                                System.out.println("Conta não encontrada ou não possui histórico.");
+                            }
+
+                        } else if(acao == 7){
+                            cliente.listarContas();
+                            System.out.println("Digite o número da conta que deseja excluir:");
+                            String numeroContaExcluir = scanner.nextLine();
+                            cliente.excluirConta(numeroContaExcluir);
+                            
+                        } else {
+                                System.out.println("Saindo...");
                         }
-                    } else {
-                        System.out.println("Conta não encontrada.");
                     }
-                    
-                }else if(acao == 5){
-                    cliente.listarContas();
-
-                }else if(acao == 6){
-                    System.out.println("Digite o número da conta para exibir o histórico:");
-                    String numeroContaHistorico = scanner.nextLine();
-                    ContaBancaria contaHistorico = encontrarConta(cliente, numeroContaHistorico);
-                    if (contaHistorico instanceof ContaCorrente) {
-                        ((ContaCorrente) contaHistorico).exibirHistorico();
-                    } else if (contaHistorico instanceof ContaPoupanca) {
-                        ((ContaPoupanca) contaHistorico).exibirHistorico();
-                    } else {
-                        System.out.println("Conta não encontrada ou não possui histórico.");
-                    }
-
-                } else if(acao == 7){
-                    cliente.listarContas();
-                    System.out.println("Digite o número da conta que deseja excluir:");
-                    String numeroContaExcluir = scanner.nextLine();
-                    cliente.excluirConta(numeroContaExcluir);
-                    
-                } else {
-                        System.out.println("Saindo...");
+                
+                } else if (cliente == null) {
+                    System.out.println("Falha no login. CPF ou senha incorretos.");
                 }
             }
         }
@@ -174,4 +180,3 @@ public class Main {
         return null;
     }
 }
-

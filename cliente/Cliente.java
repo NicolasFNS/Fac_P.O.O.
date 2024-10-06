@@ -1,11 +1,13 @@
 package cliente;
 
-import java.util.Iterator;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import conta.ContaBancaria;
+
+import utils.HashUtils;
+import java.io.Serializable;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Cliente implements Serializable {
     private String nome;
@@ -16,7 +18,11 @@ public class Cliente implements Serializable {
     public Cliente(String nome, String cpf, String senha) {
         this.nome = nome;
         this.cpf = cpf;
-        this.senha = senha;
+        try {
+            this.senha = HashUtils.hashSenha(senha);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Erro ao gerar hash da senha.");
+        }
         this.contas = new ArrayList<>();
     }
 
@@ -33,7 +39,11 @@ public class Cliente implements Serializable {
     }
 
     public boolean autenticar(String senha) {
-        return this.senha.equals(senha);
+        try {
+            return this.senha.equals(HashUtils.hashSenha(senha));
+        } catch (NoSuchAlgorithmException e) {
+            return false;
+        }
     }
 
     public void abrirConta(ContaBancaria conta) {

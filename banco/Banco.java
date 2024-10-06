@@ -1,22 +1,32 @@
 package banco;
 
-import java.util.ArrayList;
-import java.util.List;
-import cliente.*;
+import cliente.Cliente;
 import conta.ContaBancaria;
+import utils.ValidarCPF;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Banco implements Serializable {
     private List<Cliente> clientes;
+    private Map<String, Integer> tentativasLogin;
+    private static final int MAX_TENTATIVAS = 5;
 
     public Banco() {
         this.clientes = new ArrayList<>();
+        this.tentativasLogin = new HashMap<>();
     }
 
     public void cadastrarCliente(Cliente cliente) {
-        clientes.add(cliente);
-        System.out.println("Cliente " + cliente.getNome() + " cadastrado com sucesso.");
+        if(ValidarCPF.validarCPF(cliente.getCpf())){
+            clientes.add(cliente);
+            System.out.println("Cliente " + cliente.getNome() + " cadastrado com sucesso.");
+        }else{
+            System.out.println("Tentativa com CPF inválido: " + cliente.getNome());
+        }
     }
 
     public void removerCliente(String cpf) {
@@ -25,12 +35,20 @@ public class Banco implements Serializable {
     }
 
     public Cliente login(String cpf, String senha) {
+        if (tentativasLogin.containsKey(cpf) && tentativasLogin.get(cpf) >= MAX_TENTATIVAS) {
+            System.out.println("Conta temporariamente bloqueada. Tente novamente mais tarde.");
+            return null;
+        }
+
         for (Cliente cliente : clientes) {
             if (cliente.getCpf().equals(cpf) && cliente.autenticar(senha)) {
-                System.out.println("Login de "+ cliente.getNome() +" realizado com sucesso.");
+                tentativasLogin.remove(cpf);
+                System.out.println("Login de " + cliente.getNome() + " realizado com sucesso.");
                 return cliente;
             }
         }
+
+        tentativasLogin.put(cpf, tentativasLogin.getOrDefault(cpf, 0) + 1);
         System.out.println("CPF ou senha incorretos.");
         return null;
     }
